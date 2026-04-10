@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import html2canvas from "html2canvas";
 
 const COUPLE_PHOTO = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
 const FLORAL_BG = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
@@ -14,7 +15,58 @@ const cardStyle: React.CSSProperties = {
   flexShrink: 0,
 };
 
+function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDivElement>; filename: string }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+    setLoading(true);
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#faf7f3",
+      });
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/jpeg", 0.95);
+      link.click();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleDownload}
+      disabled={loading}
+      style={{
+        marginTop: "10px",
+        padding: "9px 28px",
+        background: loading ? "#b8a06a" : "linear-gradient(135deg, #c9a84c, #e8d48b, #c9a84c)",
+        color: "#3d2b1a",
+        border: "none",
+        borderRadius: "6px",
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: "13px",
+        letterSpacing: "2px",
+        textTransform: "uppercase" as const,
+        cursor: loading ? "not-allowed" : "pointer",
+        boxShadow: "0 2px 8px rgba(201,168,76,0.35)",
+        fontWeight: 600,
+        transition: "opacity 0.2s",
+      }}
+    >
+      {loading ? "Сохранение..." : "⬇ Скачать карточку"}
+    </button>
+  );
+}
+
 export default function Index() {
+  const card1Ref = useRef<HTMLDivElement>(null);
+  const card2Ref = useRef<HTMLDivElement>(null);
+
   return (
     <div className="min-h-screen bg-[#e8e3dc] flex flex-col items-center py-10 px-4 gap-8">
       <style>{`
@@ -56,9 +108,9 @@ export default function Index() {
       `}</style>
 
       {/* КАРТОЧКА 1 — Фото + имена + текст */}
-      <div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <p className="card-label text-center mb-3" style={{ letterSpacing: "4px" }}>Карточка 1 из 2</p>
-        <div style={cardStyle}>
+        <div ref={card1Ref} style={cardStyle}>
           {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
@@ -123,12 +175,13 @@ export default function Index() {
             </div>
           </div>
         </div>
+        <DownloadButton cardRef={card1Ref} filename="приглашение-карточка-1.jpg" />
       </div>
 
       {/* КАРТОЧКА 2 — Дата + место + дресс-код */}
-      <div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <p className="card-label text-center mb-3" style={{ letterSpacing: "4px" }}>Карточка 2 из 2</p>
-        <div style={cardStyle}>
+        <div ref={card2Ref} style={cardStyle}>
           {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
@@ -228,6 +281,7 @@ export default function Index() {
             </div>
           </div>
         </div>
+        <DownloadButton cardRef={card2Ref} filename="приглашение-карточка-2.jpg" />
       </div>
 
       <p className="card-label text-center" style={{ fontFamily: "'Cormorant Garamond', serif", marginTop: "4px" }}>
