@@ -4,14 +4,12 @@ import html2canvas from "html2canvas";
 const COUPLE_PHOTO_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
 const FLORAL_BG_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
 
+const PROXY_URL = "https://functions.poehali.dev/2229a973-ea11-4863-b54f-c13531af3e6d";
+
 async function urlToBase64(url: string): Promise<string> {
-  const resp = await fetch(url);
-  const blob = await resp.blob();
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.readAsDataURL(blob);
-  });
+  const resp = await fetch(`${PROXY_URL}?url=${encodeURIComponent(url)}`);
+  const text = await resp.text();
+  return text;
 }
 
 const cardStyle: React.CSSProperties = {

@@ -1,0 +1,10 @@
+{
+  "tests": [
+    {
+      "name": "Test proxy image",
+      "method": "GET",
+      "path": "/?url=https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg",
+      "expectedStatus": 200
+    }
+  ]
+}
