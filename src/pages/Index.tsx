@@ -494,7 +494,7 @@ export default function Index() {
           </div>
 
           {/* Фото */}
-          <div style={{ position: "relative", zIndex: 10, padding: "48px 50px 0" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "58px 50px 0" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "2px solid #e8d48b", boxShadow: "0 4px 16px rgba(0,0,0,0.14)" }}>
               <img src={COUPLE_PHOTO_URL} alt="Александр и Ангелина"
                 style={{ width: "100%", height: "320px", objectFit: "cover", objectPosition: "center top", display: "block" }} />
@@ -508,21 +508,13 @@ export default function Index() {
             </h2>
           </div>
 
-          {/* Разделитель */}
-          <div style={{ position: "relative", zIndex: 10, padding: "4px 22px" }}>
-            <div className="sec-div"><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
-          </div>
-
-          {/* Текст */}
-          <div style={{ position: "relative", zIndex: 10, padding: "0 26px", textAlign: "center" }}>
-            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "4px" }}>Привет!</p>
-            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6 }}>Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.</p>
-          </div>
-
-          {/* Bottom ornament */}
-          <div style={{ position: "absolute", bottom: "12px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+          {/* Текст + bottom ornament — прижаты к низу */}
+          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div className="sec-div" style={{ marginBottom: "4px" }}><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
+            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "2px" }}>Привет!</p>
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "6px", textAlign: "center" }}>Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.</p>
             <div className="gold-line" style={{ width: "100%" }} />
-            <div style={{ display: "flex", gap: "6px" }}>
+            <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
             </div>
           </div>
