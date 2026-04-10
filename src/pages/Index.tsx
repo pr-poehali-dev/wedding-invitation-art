@@ -62,7 +62,8 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
         }
       });
 
-      // Ждём перерисовки
+      // Ждём загрузки шрифтов и перерисовки
+      await document.fonts.ready;
       await new Promise((r) => setTimeout(r, 200));
 
       const canvas = await html2canvas(el, {
@@ -190,7 +191,7 @@ export default function Index() {
               <img
                 src={COUPLE_PHOTO_URL}
                 alt="Александр и Ангелина"
-                style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center 5%", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
+                style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center 20%", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
               />
             </div>
           </div>
