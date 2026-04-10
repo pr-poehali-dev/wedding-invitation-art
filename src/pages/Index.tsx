@@ -1,8 +1,18 @@
 import React, { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 
-const COUPLE_PHOTO = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
-const FLORAL_BG = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
+const COUPLE_PHOTO_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
+const FLORAL_BG_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
+
+async function urlToBase64(url: string): Promise<string> {
+  const resp = await fetch(url);
+  const blob = await resp.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+}
 
 const cardStyle: React.CSSProperties = {
   width: "378px",
@@ -22,12 +32,47 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
     if (!cardRef.current) return;
     setLoading(true);
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      const el = cardRef.current;
+
+      // Загружаем оба изображения как base64
+      const [coupleB64, floralB64] = await Promise.all([
+        urlToBase64(COUPLE_PHOTO_URL),
+        urlToBase64(FLORAL_BG_URL),
+      ]);
+
+      // Временно подменяем src у <img>
+      const imgs = el.querySelectorAll<HTMLImageElement>("img");
+      const origSrcs: string[] = [];
+      imgs.forEach((img) => {
+        origSrcs.push(img.src);
+        if (img.src.includes("7598d144")) img.src = coupleB64;
+      });
+
+      // Временно подменяем background-image у div с флоральным фоном
+      const bgDivs = el.querySelectorAll<HTMLElement>("[style]");
+      const origBgs: string[] = [];
+      bgDivs.forEach((div) => {
+        const bg = div.style.backgroundImage;
+        origBgs.push(bg);
+        if (bg && bg.includes("428c9347")) {
+          div.style.backgroundImage = `url(${floralB64})`;
+        }
+      });
+
+      // Ждём перерисовки
+      await new Promise((r) => setTimeout(r, 100));
+
+      const canvas = await html2canvas(el, {
         scale: 3,
-        useCORS: true,
-        allowTaint: true,
+        useCORS: false,
+        allowTaint: false,
         backgroundColor: "#faf7f3",
       });
+
+      // Восстанавливаем оригинальные значения
+      imgs.forEach((img, i) => { img.src = origSrcs[i]; });
+      bgDivs.forEach((div, i) => { if (origBgs[i]) div.style.backgroundImage = origBgs[i]; });
+
       const link = document.createElement("a");
       link.download = filename;
       link.href = canvas.toDataURL("image/jpeg", 0.95);
@@ -114,7 +159,7 @@ export default function Index() {
           {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
-            backgroundImage: `url(${FLORAL_BG})`,
+            backgroundImage: `url(${FLORAL_BG_URL})`,
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
@@ -136,7 +181,7 @@ export default function Index() {
           <div style={{ position: "relative", zIndex: 10, padding: "10px 50px 0" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "2px solid #e8d48b", boxShadow: "0 4px 16px rgba(0,0,0,0.14)" }}>
               <img
-                src={COUPLE_PHOTO}
+                src={COUPLE_PHOTO_URL}
                 alt="Александр и Ангелина"
                 style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center 5%", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
               />
@@ -185,7 +230,7 @@ export default function Index() {
           {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
-            backgroundImage: `url(${FLORAL_BG})`,
+            backgroundImage: `url(${FLORAL_BG_URL})`,
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
