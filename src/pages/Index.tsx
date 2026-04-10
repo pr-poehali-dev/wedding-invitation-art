@@ -62,9 +62,14 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
         }
       });
 
-      // Ждём загрузки шрифтов и перерисовки
+      // Принудительно загружаем все шрифты
       await document.fonts.ready;
-      await new Promise((r) => setTimeout(r, 200));
+      await Promise.all([
+        document.fonts.load("700 32px 'Playfair Display'", "24 ИЮНЯ 2026"),
+        document.fonts.load("400 34px 'Great Vibes'", "Александр & Ангелина"),
+        document.fonts.load("italic 400 13px 'Cormorant Garamond'", "Привет"),
+      ]);
+      await new Promise((r) => setTimeout(r, 400));
 
       const canvas = await html2canvas(el, {
         scale: 3,
@@ -191,7 +196,7 @@ export default function Index() {
               <img
                 src={COUPLE_PHOTO_URL}
                 alt="Александр и Ангелина"
-                style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center 20%", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
+                style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center top", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
               />
             </div>
           </div>
@@ -257,14 +262,14 @@ export default function Index() {
           </div>
 
           {/* Дата */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "8px 22px 4px" }}>
-            <p className="font-serif-el" style={{ fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", marginBottom: "4px", lineHeight: 1.6 }}>
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "8px 22px 0" }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", marginBottom: "4px", lineHeight: 1.4 }}>
               Приглашаем вас на торжество,<br/>посвящённое дню нашего бракосочетания
             </p>
-            <p className="font-playfair" style={{ fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", lineHeight: 1.1 }}>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", lineHeight: 1.0, margin: 0 }}>
               24 ИЮНЯ 2026
             </p>
-            <div className="gold-line" style={{ width: "100%", marginTop: "6px" }} />
+            <div className="gold-line" style={{ width: "100%", marginTop: "8px" }} />
           </div>
 
           {/* Время и место */}
