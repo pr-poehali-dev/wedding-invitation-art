@@ -266,14 +266,16 @@ export default function Index() {
             <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", marginBottom: "4px", lineHeight: 1.4 }}>
               Приглашаем вас на торжество,<br/>посвящённое дню нашего бракосочетания
             </p>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", lineHeight: 1.0, margin: 0 }}>
-              24 ИЮНЯ 2026
-            </p>
-            <div className="gold-line" style={{ width: "100%", marginTop: "8px" }} />
+            <div style={{ height: "42px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", display: "block" }}>
+                24 ИЮНЯ 2026
+              </span>
+            </div>
+            <div className="gold-line" style={{ width: "100%", marginTop: "4px" }} />
           </div>
 
           {/* Время и место */}
-          <div style={{ position: "relative", zIndex: 10, padding: "6px 16px", display: "flex", gap: "10px" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "8px 16px 0", display: "flex", gap: "10px" }}>
             {/* ЗАГС */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
               <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Торжественная<br/>регистрация</p>
@@ -318,21 +320,17 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Финальная фраза */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "3px 22px 0" }}>
+          {/* Финальная фраза + Bottom ornament */}
+          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
             <div className="sec-div" style={{ marginBottom: "2px" }}>
               <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
             </div>
             <p className="font-script" style={{ fontSize: "20px", color: "#3d5a3e", lineHeight: 1.2 }}>
               До встречи на нашей свадьбе!
             </p>
-            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px" }}>
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", marginBottom: "4px" }}>
               Александр и Ангелина
             </p>
-          </div>
-
-          {/* Bottom ornament */}
-          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
             <div className="gold-line" style={{ width: "100%" }} />
             <div style={{ display: "flex", gap: "6px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
