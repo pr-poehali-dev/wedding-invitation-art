@@ -20,7 +20,7 @@ async function loadImageFromProxy(url: string): Promise<HTMLImageElement> {
 
 async function loadFonts() {
   const fonts = [
-    new FontFace("Pacifico", "url(https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A.woff2)"),
+    new FontFace("Marck Script", "url(https://fonts.gstatic.com/s/marckscript/v15/nwpTtK2oNgBA3Or78gapdwuCzw.woff2)"),
     new FontFace("Great Vibes", "url(https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCZA.woff2)"),
     new FontFace("Playfair Display", "url(https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.woff2)", { weight: "700" }),
     new FontFace("Cormorant Garamond", "url(https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYrEPjuw-NMg.woff2)", { style: "italic" }),
@@ -148,7 +148,7 @@ async function drawCard1(coupleImg: HTMLImageElement, floralImg: HTMLImageElemen
   // Names
   const namesY = photoY + photoH + 22;
   ctx.fillStyle = "#3d5a3e";
-  ctx.font = `${24 * S}px 'Pacifico'`;
+  ctx.font = `${28 * S}px 'Marck Script'`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("Александр & Ангелина", (W / 2) * S, namesY * S);
@@ -431,7 +431,7 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-[#e8e3dc] flex flex-col items-center py-10 px-4 gap-8">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=Pacifico&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=Marck+Script&display=swap');
         .font-script { font-family: 'Great Vibes', cursive; }
         .font-pacifico { font-family: 'Pacifico', cursive; }
         .font-serif-el { font-family: 'Cormorant Garamond', serif; }
@@ -503,7 +503,7 @@ export default function Index() {
 
           {/* Имена */}
           <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "10px" }}>
-            <h2 style={{ fontFamily: "'Pacifico', cursive", fontSize: "24px", color: "#3d5a3e", lineHeight: 1.1, margin: 0 }}>
+            <h2 style={{ fontFamily: "'Marck Script', cursive", fontSize: "28px", color: "#3d5a3e", lineHeight: 1.1, margin: 0 }}>
               Александр &amp; Ангелина
             </h2>
           </div>
