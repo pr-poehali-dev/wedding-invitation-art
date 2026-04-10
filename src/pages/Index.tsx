@@ -81,7 +81,7 @@ export default function Index() {
           </div>
 
           {/* Общее фото */}
-          <div style={{ position: "relative", zIndex: 10, padding: "10px 22px 0" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "10px 50px 0" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "2px solid #e8d48b", boxShadow: "0 4px 16px rgba(0,0,0,0.14)" }}>
               <img
                 src={COUPLE_PHOTO}
