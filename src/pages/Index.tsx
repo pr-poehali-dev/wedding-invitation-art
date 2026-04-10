@@ -273,70 +273,69 @@ export default function Index() {
             </div>
           </div>
 
-          <div style={{ position: "relative", zIndex: 10, padding: "0 22px" }}>
-            <div className="gold-line" />
-          </div>
+          {/* Линия + окошки + дресс-код + финал — всё прижато к низу */}
+          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "stretch", gap: "0" }}>
+            <div className="gold-line" style={{ marginBottom: "8px" }} />
 
-          {/* Время и место */}
-          <div style={{ position: "relative", zIndex: 10, padding: "10px 16px 0", display: "flex", gap: "10px" }}>
-            {/* ЗАГС */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
-              <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Торжественная<br/>регистрация</p>
-              <p className="font-playfair" style={{ fontSize: "22px", fontWeight: 700, color: "#2d2416" }}>15:00</p>
-              <span style={{ fontSize: "16px", margin: "2px 0" }}>💍</span>
-              <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
-                г. Тюмень<br/>ул. Малыгина, 85<br/>ЗАГС
-              </p>
-            </div>
-            {/* Банкет */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
-              <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Праздничный<br/>ужин</p>
-              <p className="font-playfair" style={{ fontSize: "18px", fontWeight: 700, color: "#2d2416", lineHeight: 1.2 }}>18:30–00:30</p>
-              <span style={{ fontSize: "16px", margin: "2px 0" }}>🥂</span>
-              <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
-                г. Тюмень<br/>ул. Н. Фёдорова, 9<br/>Рест. «Грин Хаус»
-              </p>
-            </div>
-          </div>
-
-          {/* Дресс-код */}
-          <div style={{ position: "relative", zIndex: 10, padding: "2px 18px 0" }}>
-            <div className="sec-div" style={{ marginBottom: "3px" }}>
-              <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
-            </div>
-            <div style={{ padding: "5px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
-              <h3 className="font-script" style={{ fontSize: "24px", color: "#3d2b1a", lineHeight: 1.1, marginBottom: "2px" }}>Дресс-код</h3>
-              <p className="font-serif-el" style={{ fontSize: "11px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "2px" }}>
-                Для нас самое главное — ваше присутствие!
-              </p>
-              <p className="font-serif-el" style={{ fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "4px" }}>
-                Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰
-              </p>
-              <div style={{ display: "flex", justifyContent: "center", gap: "7px" }}>
-                <div className="dress-swatch" style={{ background: "#d4c5b0" }} />
-                <div className="dress-swatch" style={{ background: "#e8a0a8" }} />
-                <div className="dress-swatch" style={{ background: "#c4b0d4" }} />
-                <div className="dress-swatch" style={{ background: "#a8bfd4" }} />
-                <div className="dress-swatch" style={{ background: "#9db89e" }} />
-                <div className="dress-swatch" style={{ background: "#d8e490" }} />
+            {/* Время и место */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "6px" }}>
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
+                <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Торжественная<br/>регистрация</p>
+                <p className="font-playfair" style={{ fontSize: "22px", fontWeight: 700, color: "#2d2416" }}>15:00</p>
+                <span style={{ fontSize: "16px", margin: "2px 0" }}>💍</span>
+                <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
+                  г. Тюмень<br/>ул. Малыгина, 85<br/>ЗАГС
+                </p>
+              </div>
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
+                <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Праздничный<br/>ужин</p>
+                <p className="font-playfair" style={{ fontSize: "18px", fontWeight: 700, color: "#2d2416", lineHeight: 1.2 }}>18:30–00:30</p>
+                <span style={{ fontSize: "16px", margin: "2px 0" }}>🥂</span>
+                <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
+                  г. Тюмень<br/>ул. Н. Фёдорова, 9<br/>Рест. «Грин Хаус»
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Финальная фраза + Bottom ornament */}
-          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
-            <div className="sec-div" style={{ marginBottom: "2px" }}>
-              <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
+            {/* Дресс-код */}
+            <div style={{ marginBottom: "4px" }}>
+              <div className="sec-div" style={{ marginBottom: "3px" }}>
+                <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
+              </div>
+              <div style={{ padding: "5px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
+                <h3 className="font-script" style={{ fontSize: "24px", color: "#3d2b1a", lineHeight: 1.1, marginBottom: "2px" }}>Дресс-код</h3>
+                <p className="font-serif-el" style={{ fontSize: "11px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "2px" }}>
+                  Для нас самое главное — ваше присутствие!
+                </p>
+                <p className="font-serif-el" style={{ fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "4px" }}>
+                  Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰
+                </p>
+                <div style={{ display: "flex", justifyContent: "center", gap: "7px" }}>
+                  <div className="dress-swatch" style={{ background: "#d4c5b0" }} />
+                  <div className="dress-swatch" style={{ background: "#e8a0a8" }} />
+                  <div className="dress-swatch" style={{ background: "#c4b0d4" }} />
+                  <div className="dress-swatch" style={{ background: "#a8bfd4" }} />
+                  <div className="dress-swatch" style={{ background: "#9db89e" }} />
+                  <div className="dress-swatch" style={{ background: "#d8e490" }} />
+                </div>
+              </div>
             </div>
-            <p className="font-script" style={{ fontSize: "20px", color: "#3d5a3e", lineHeight: 1.2 }}>
-              До встречи на нашей свадьбе!
-            </p>
-            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", marginBottom: "4px" }}>
-              Александр и Ангелина
-            </p>
-            <div className="gold-line" style={{ width: "100%" }} />
-            <div style={{ display: "flex", gap: "6px" }}>
-              <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
+
+            {/* Финальная фраза + Bottom ornament */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
+              <div className="sec-div" style={{ marginBottom: "2px" }}>
+                <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
+              </div>
+              <p className="font-script" style={{ fontSize: "20px", color: "#3d5a3e", lineHeight: 1.2 }}>
+                До встречи на нашей свадьбе!
+              </p>
+              <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", marginBottom: "4px" }}>
+                Александр и Ангелина
+              </p>
+              <div className="gold-line" style={{ width: "100%" }} />
+              <div style={{ display: "flex", gap: "6px" }}>
+                <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
+              </div>
             </div>
           </div>
         </div>
