@@ -21,6 +21,7 @@ async function loadImageFromProxy(url: string): Promise<HTMLImageElement> {
 async function loadFonts() {
   const fonts = [
     new FontFace("Pacifico", "url(https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A.woff2)"),
+    new FontFace("Great Vibes", "url(https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCZA.woff2)"),
     new FontFace("Playfair Display", "url(https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.woff2)", { weight: "700" }),
     new FontFace("Cormorant Garamond", "url(https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYrEPjuw-NMg.woff2)", { style: "italic" }),
     new FontFace("Cormorant Garamond", "url(https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fug.woff2)"),
@@ -235,7 +236,7 @@ async function drawCard2(floralImg: HTMLImageElement): Promise<HTMLCanvasElement
   // "До встречи"
   const untilY = sigY - 6;
   ctx.fillStyle = "#3d5a3e";
-  ctx.font = `${20 * S}px 'Pacifico'`;
+  ctx.font = `${26 * S}px 'Great Vibes'`;
   ctx.textBaseline = "bottom";
   ctx.fillText("До встречи на нашей свадьбе!", (W / 2) * S, untilY * S);
 
@@ -261,9 +262,9 @@ async function drawCard2(floralImg: HTMLImageElement): Promise<HTMLCanvasElement
 
   // dresscode title
   ctx.fillStyle = "#3d2b1a";
-  ctx.font = `${22 * S}px 'Pacifico'`;
+  ctx.font = `${28 * S}px 'Great Vibes'`;
   ctx.textBaseline = "top";
-  ctx.fillText("Дресс-код", (W / 2) * S, (dcTopY + 6) * S);
+  ctx.fillText("Дресс-код", (W / 2) * S, (dcTopY + 2) * S);
 
   // dresscode text
   ctx.fillStyle = "#5a3e2b";
@@ -601,7 +602,7 @@ export default function Index() {
                 <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
               </div>
               <div style={{ padding: "5px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
-                <h3 style={{ fontFamily: "'Pacifico', cursive", fontSize: "22px", color: "#3d2b1a", lineHeight: 1.1, margin: "0 0 2px" }}>Дресс-код</h3>
+                <h3 style={{ fontFamily: "'Great Vibes', cursive", fontSize: "26px", color: "#3d2b1a", lineHeight: 1.1, margin: "0 0 2px" }}>Дресс-код</h3>
                 <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.4, margin: "0 0 2px" }}>Для нас самое главное — ваше присутствие!</p>
                 <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "10px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.4, margin: "0 0 4px" }}>Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰</p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "7px" }}>
@@ -617,7 +618,7 @@ export default function Index() {
               <div className="sec-div" style={{ marginBottom: "1px" }}>
                 <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
               </div>
-              <p style={{ fontFamily: "'Pacifico', cursive", fontSize: "18px", color: "#3d5a3e", lineHeight: 1.2, margin: 0 }}>До встречи на нашей свадьбе!</p>
+              <p style={{ fontFamily: "'Great Vibes', cursive", fontSize: "22px", color: "#3d5a3e", lineHeight: 1.2, margin: 0 }}>До встречи на нашей свадьбе!</p>
               <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", margin: "0 0 3px" }}>Александр и Ангелина</p>
               <div className="gold-line" style={{ width: "100%" }} />
               <div style={{ display: "flex", gap: "6px", marginTop: "2px" }}>
