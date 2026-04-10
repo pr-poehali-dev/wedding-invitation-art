@@ -38,12 +38,17 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
         urlToBase64(FLORAL_BG_URL),
       ]);
 
-      // Временно подменяем src у <img>
+      // Временно подменяем src у <img> и убираем filter
       const imgs = el.querySelectorAll<HTMLImageElement>("img");
       const origSrcs: string[] = [];
+      const origFilters: string[] = [];
       imgs.forEach((img) => {
         origSrcs.push(img.src);
-        if (img.src.includes("7598d144")) img.src = coupleB64;
+        origFilters.push(img.style.filter);
+        if (img.src.includes("7598d144")) {
+          img.src = coupleB64;
+          img.style.filter = "none";
+        }
       });
 
       // Временно подменяем background-image у div с флоральным фоном
@@ -58,17 +63,21 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
       });
 
       // Ждём перерисовки
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 200));
 
       const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: false,
         allowTaint: false,
         backgroundColor: "#faf7f3",
+        imageTimeout: 0,
       });
 
       // Восстанавливаем оригинальные значения
-      imgs.forEach((img, i) => { img.src = origSrcs[i]; });
+      imgs.forEach((img, i) => {
+        img.src = origSrcs[i];
+        img.style.filter = origFilters[i];
+      });
       bgDivs.forEach((div, i) => { if (origBgs[i]) div.style.backgroundImage = origBgs[i]; });
 
       const link = document.createElement("a");
@@ -281,15 +290,15 @@ export default function Index() {
 
           {/* Дресс-код */}
           <div style={{ position: "relative", zIndex: 10, padding: "2px 18px 0" }}>
-            <div className="sec-div" style={{ marginBottom: "5px" }}>
+            <div className="sec-div" style={{ marginBottom: "3px" }}>
               <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
             </div>
-            <div style={{ padding: "8px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
-              <h3 className="font-script" style={{ fontSize: "26px", color: "#3d2b1a", lineHeight: 1.1, marginBottom: "3px" }}>Дресс-код</h3>
-              <p className="font-serif-el" style={{ fontSize: "11.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "4px" }}>
+            <div style={{ padding: "5px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
+              <h3 className="font-script" style={{ fontSize: "24px", color: "#3d2b1a", lineHeight: 1.1, marginBottom: "2px" }}>Дресс-код</h3>
+              <p className="font-serif-el" style={{ fontSize: "11px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "2px" }}>
                 Для нас самое главное — ваше присутствие!
               </p>
-              <p className="font-serif-el" style={{ fontSize: "11px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "5px" }}>
+              <p className="font-serif-el" style={{ fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "4px" }}>
                 Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰
               </p>
               <div style={{ display: "flex", justifyContent: "center", gap: "7px" }}>
@@ -304,14 +313,14 @@ export default function Index() {
           </div>
 
           {/* Финальная фраза */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "6px 22px 0" }}>
-            <div className="sec-div" style={{ marginBottom: "4px" }}>
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "3px 22px 0" }}>
+            <div className="sec-div" style={{ marginBottom: "2px" }}>
               <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
             </div>
-            <p className="font-script" style={{ fontSize: "22px", color: "#3d5a3e", lineHeight: 1.3 }}>
+            <p className="font-script" style={{ fontSize: "20px", color: "#3d5a3e", lineHeight: 1.2 }}>
               До встречи на нашей свадьбе!
             </p>
-            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px" }}>
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px" }}>
               Александр и Ангелина
             </p>
           </div>
