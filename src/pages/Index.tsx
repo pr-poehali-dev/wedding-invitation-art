@@ -86,20 +86,20 @@ export default function Index() {
               <img
                 src={COUPLE_PHOTO}
                 alt="Александр и Ангелина"
-                style={{ width: "100%", height: "210px", objectFit: "cover", objectPosition: "center 10%", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
+                style={{ width: "100%", height: "270px", objectFit: "cover", objectPosition: "center center", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
               />
             </div>
           </div>
 
           {/* Имена в одну линию */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "8px" }}>
-            <h2 className="font-script" style={{ fontSize: "36px", color: "#3d5a3e", lineHeight: 1.1 }}>
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "6px" }}>
+            <h2 className="font-script" style={{ fontSize: "34px", color: "#3d5a3e", lineHeight: 1.1 }}>
               Александр &amp; Ангелина
             </h2>
           </div>
 
           {/* Разделитель */}
-          <div style={{ position: "relative", zIndex: 10, padding: "4px 22px" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "2px 22px" }}>
             <div className="sec-div">
               <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
             </div>
@@ -107,14 +107,14 @@ export default function Index() {
 
           {/* Текст приглашения */}
           <div style={{ position: "relative", zIndex: 10, padding: "0 26px", textAlign: "center" }}>
-            <p className="font-serif-el" style={{ fontSize: "14px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.75, marginBottom: "6px" }}>
+            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.7, marginBottom: "4px" }}>
               Привет!
             </p>
-            <p className="font-serif-el" style={{ fontSize: "13.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.75, marginBottom: "6px" }}>
+            <p className="font-serif-el" style={{ fontSize: "12.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.7, marginBottom: "4px" }}>
               Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.
             </p>
-            <div className="gold-line" style={{ width: "70px", margin: "0 auto 6px" }} />
-            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.75 }}>
+            <div className="gold-line" style={{ width: "70px", margin: "0 auto 4px" }} />
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.7 }}>
               Можешь приехать в ЗАГС, поддержать и быть с нами с самого начала, а можешь приехать сразу на банкет. Мы будем очень рады тебе ☺️
             </p>
           </div>
