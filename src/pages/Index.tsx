@@ -67,6 +67,7 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
       await Promise.all([
         document.fonts.load("700 32px 'Playfair Display'", "24 ИЮНЯ 2026"),
         document.fonts.load("400 34px 'Great Vibes'", "Александр & Ангелина"),
+        document.fonts.load("400 26px 'Pacifico'", "Александр & Ангелина"),
         document.fonts.load("italic 400 13px 'Cormorant Garamond'", "Привет"),
       ]);
       await new Promise((r) => setTimeout(r, 400));
@@ -128,8 +129,9 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-[#e8e3dc] flex flex-col items-center py-10 px-4 gap-8">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=Pacifico&display=swap');
         .font-script { font-family: 'Great Vibes', cursive; }
+        .font-pacifico { font-family: 'Pacifico', cursive; }
         .font-serif-el { font-family: 'Cormorant Garamond', serif; }
         .font-playfair { font-family: 'Playfair Display', serif; }
         .gold-line {
@@ -176,22 +178,22 @@ export default function Index() {
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
-          {/* Top ornament */}
-          <div style={{ position: "relative", zIndex: 10, paddingTop: "14px", paddingLeft: "20px", paddingRight: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {/* Top ornament — зафиксирован сверху */}
+          <div style={{ position: "absolute", top: "14px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
             </div>
             <div className="gold-line" style={{ width: "100%", marginBottom: "3px" }} />
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <div className="gold-line" style={{ width: "40px" }} />
-              <span className="card-label" style={{ fontSize: "8px", letterSpacing: "3px", whiteSpace: "nowrap" }}>Свадебное приглашение</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", whiteSpace: "nowrap" }}>Свадебное приглашение</span>
               <div className="gold-line" style={{ width: "40px" }} />
             </div>
             <div className="gold-line" style={{ width: "100%", marginTop: "3px" }} />
           </div>
 
           {/* Общее фото */}
-          <div style={{ position: "relative", zIndex: 10, padding: "10px 50px 0" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "62px 50px 0" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "2px solid #e8d48b", boxShadow: "0 4px 16px rgba(0,0,0,0.14)" }}>
               <img
                 src={COUPLE_PHOTO_URL}
@@ -201,9 +203,9 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Имена в одну линию */}
+          {/* Имена в одну линию — шрифт Pacifico */}
           <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "8px" }}>
-            <h2 className="font-script" style={{ fontSize: "34px", color: "#3d5a3e", lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: "'Pacifico', cursive", fontSize: "26px", color: "#3d5a3e", lineHeight: 1.1, margin: 0 }}>
               Александр &amp; Ангелина
             </h2>
           </div>
@@ -247,25 +249,27 @@ export default function Index() {
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
-          {/* Top ornament */}
-          <div style={{ position: "relative", zIndex: 10, paddingTop: "14px", paddingLeft: "20px", paddingRight: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {/* Top ornament — зафиксирован сверху */}
+          <div style={{ position: "absolute", top: "14px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
             </div>
             <div className="gold-line" style={{ width: "100%", marginBottom: "3px" }} />
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <div className="gold-line" style={{ width: "40px" }} />
-              <span className="card-label" style={{ fontSize: "8px", letterSpacing: "3px", whiteSpace: "nowrap" }}>24 · Июня · 2026</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", whiteSpace: "nowrap" }}>24 · Июня · 2026</span>
               <div className="gold-line" style={{ width: "40px" }} />
             </div>
             <div className="gold-line" style={{ width: "100%", marginTop: "3px" }} />
           </div>
 
           {/* Дата */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "8px 22px 0" }}>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", marginBottom: "4px", lineHeight: 1.4 }}>
-              Приглашаем вас на торжество,<br/>посвящённое дню нашего бракосочетания
-            </p>
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "68px 22px 0" }}>
+            <div style={{ height: "30px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1 }}>
+                Приглашаем вас на торжество, посвящённое дню нашего бракосочетания
+              </span>
+            </div>
             <div style={{ height: "42px", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", display: "block" }}>
                 24 ИЮНЯ 2026
@@ -280,20 +284,28 @@ export default function Index() {
             {/* Время и место */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "6px" }}>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
-                <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Торжественная<br/>регистрация</p>
-                <p className="font-playfair" style={{ fontSize: "22px", fontWeight: 700, color: "#2d2416" }}>15:00</p>
+                <div style={{ height: "26px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2, textAlign: "center" }}>Торжественная регистрация</span>
+                </div>
+                <div style={{ height: "30px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 700, color: "#2d2416" }}>15:00</span>
+                </div>
                 <span style={{ fontSize: "16px", margin: "2px 0" }}>💍</span>
-                <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
-                  г. Тюмень<br/>ул. Малыгина, 85<br/>ЗАГС
-                </p>
+                <div style={{ height: "54px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5, textAlign: "center" }}>г. Тюмень<br/>ул. Малыгина, 85<br/>ЗАГС</span>
+                </div>
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
-                <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Праздничный<br/>ужин</p>
-                <p className="font-playfair" style={{ fontSize: "18px", fontWeight: 700, color: "#2d2416", lineHeight: 1.2 }}>18:30–00:30</p>
+                <div style={{ height: "26px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2, textAlign: "center" }}>Праздничный ужин</span>
+                </div>
+                <div style={{ height: "30px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", fontWeight: 700, color: "#2d2416" }}>18:30–00:30</span>
+                </div>
                 <span style={{ fontSize: "16px", margin: "2px 0" }}>🥂</span>
-                <p className="font-serif-el" style={{ fontSize: "11px", color: "#5a3e2b", lineHeight: 1.6 }}>
-                  г. Тюмень<br/>ул. Н. Фёдорова, 9<br/>Рест. «Грин Хаус»
-                </p>
+                <div style={{ height: "54px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5, textAlign: "center" }}>г. Тюмень<br/>ул. Н. Фёдорова, 9<br/>Рест. «Грин Хаус»</span>
+                </div>
               </div>
             </div>
 
