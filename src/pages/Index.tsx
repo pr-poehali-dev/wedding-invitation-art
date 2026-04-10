@@ -1,15 +1,367 @@
 import React, { useRef, useState } from "react";
-import html2canvas from "html2canvas";
 
 const COUPLE_PHOTO_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
 const FLORAL_BG_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
-
 const PROXY_URL = "https://functions.poehali.dev/2229a973-ea11-4863-b54f-c13531af3e6d";
 
-async function urlToBase64(url: string): Promise<string> {
+const W = 378;
+const H = 567;
+const S = 3; // scale
+
+async function loadImageFromProxy(url: string): Promise<HTMLImageElement> {
   const resp = await fetch(`${PROXY_URL}?url=${encodeURIComponent(url)}`);
-  const text = await resp.text();
-  return text;
+  const b64 = await resp.text();
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.src = b64;
+  });
+}
+
+async function loadFonts() {
+  const fonts = [
+    new FontFace("Pacifico", "url(https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A.woff2)"),
+    new FontFace("Playfair Display", "url(https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.woff2)", { weight: "700" }),
+    new FontFace("Cormorant Garamond", "url(https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYrEPjuw-NMg.woff2)", { style: "italic" }),
+    new FontFace("Cormorant Garamond", "url(https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fug.woff2)"),
+  ];
+  await Promise.all(fonts.map(async (f) => {
+    await f.load();
+    document.fonts.add(f);
+  }));
+}
+
+function goldGradient(ctx: CanvasRenderingContext2D, x1: number, x2: number, y: number) {
+  const g = ctx.createLinearGradient(x1 * S, y * S, x2 * S, y * S);
+  g.addColorStop(0, "transparent");
+  g.addColorStop(0.3, "#c9a84c");
+  g.addColorStop(0.5, "#e8d48b");
+  g.addColorStop(0.7, "#c9a84c");
+  g.addColorStop(1, "transparent");
+  return g;
+}
+
+function drawGoldLine(ctx: CanvasRenderingContext2D, x: number, y: number, w: number) {
+  ctx.beginPath();
+  ctx.strokeStyle = goldGradient(ctx, x, x + w, y);
+  ctx.lineWidth = 1 * S;
+  ctx.moveTo(x * S, y * S);
+  ctx.lineTo((x + w) * S, y * S);
+  ctx.stroke();
+}
+
+function drawPearls(ctx: CanvasRenderingContext2D, cx: number, y: number) {
+  const positions = [-10, 0, 10];
+  positions.forEach((offset) => {
+    const px = (cx + offset) * S;
+    const py = y * S;
+    const r = 3.5 * S;
+    const g = ctx.createRadialGradient(px - r * 0.35, py - r * 0.35, 0, px, py, r);
+    g.addColorStop(0, "#fff");
+    g.addColorStop(0.5, "#e8e0d4");
+    g.addColorStop(1, "#d4c9bc");
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.shadowColor = "rgba(0,0,0,0.15)";
+    ctx.shadowBlur = 3 * S;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawTopOrnament(ctx: CanvasRenderingContext2D, label: string) {
+  const cx = W / 2;
+  drawPearls(ctx, cx, 21);
+  drawGoldLine(ctx, 20, 28, W - 40);
+  // label
+  ctx.fillStyle = "#8a7560";
+  ctx.font = `${8 * S}px 'Cormorant Garamond'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.letterSpacing = `${3 * S}px`;
+  ctx.fillText(label.toUpperCase(), cx * S, 33.5 * S);
+  ctx.letterSpacing = "0px";
+  drawGoldLine(ctx, 20, 37, W - 40);
+}
+
+async function drawCard1(coupleImg: HTMLImageElement, floralImg: HTMLImageElement): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement("canvas");
+  canvas.width = W * S;
+  canvas.height = H * S;
+  const ctx = canvas.getContext("2d")!;
+
+  // Background
+  ctx.fillStyle = "#faf7f3";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Floral bg
+  ctx.globalAlpha = 0.15;
+  ctx.drawImage(floralImg, 0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 1;
+
+  // Top ornament
+  drawTopOrnament(ctx, "Свадебное приглашение");
+
+  // Photo
+  const photoX = 50, photoY = 48, photoW = W - 100, photoH = 320;
+  ctx.save();
+  ctx.beginPath();
+  const r = 8;
+  ctx.moveTo((photoX + r) * S, photoY * S);
+  ctx.lineTo((photoX + photoW - r) * S, photoY * S);
+  ctx.quadraticCurveTo((photoX + photoW) * S, photoY * S, (photoX + photoW) * S, (photoY + r) * S);
+  ctx.lineTo((photoX + photoW) * S, (photoY + photoH - r) * S);
+  ctx.quadraticCurveTo((photoX + photoW) * S, (photoY + photoH) * S, (photoX + photoW - r) * S, (photoY + photoH) * S);
+  ctx.lineTo((photoX + r) * S, (photoY + photoH) * S);
+  ctx.quadraticCurveTo(photoX * S, (photoY + photoH) * S, photoX * S, (photoY + photoH - r) * S);
+  ctx.lineTo(photoX * S, (photoY + r) * S);
+  ctx.quadraticCurveTo(photoX * S, photoY * S, (photoX + r) * S, photoY * S);
+  ctx.clip();
+
+  // draw photo centered top
+  const scale = Math.max(photoW / coupleImg.width, photoH / coupleImg.height);
+  const dw = coupleImg.width * scale;
+  const dh = coupleImg.height * scale;
+  const dx = photoX + (photoW - dw) / 2;
+  const dy = photoY;
+  ctx.drawImage(coupleImg, dx * S, dy * S, dw * S, dh * S);
+  ctx.restore();
+
+  // Gold border around photo
+  ctx.strokeStyle = "#e8d48b";
+  ctx.lineWidth = 2 * S;
+  ctx.beginPath();
+  ctx.moveTo((photoX + r) * S, photoY * S);
+  ctx.lineTo((photoX + photoW - r) * S, photoY * S);
+  ctx.quadraticCurveTo((photoX + photoW) * S, photoY * S, (photoX + photoW) * S, (photoY + r) * S);
+  ctx.lineTo((photoX + photoW) * S, (photoY + photoH - r) * S);
+  ctx.quadraticCurveTo((photoX + photoW) * S, (photoY + photoH) * S, (photoX + photoW - r) * S, (photoY + photoH) * S);
+  ctx.lineTo((photoX + r) * S, (photoY + photoH) * S);
+  ctx.quadraticCurveTo(photoX * S, (photoY + photoH) * S, photoX * S, (photoY + photoH - r) * S);
+  ctx.lineTo(photoX * S, (photoY + r) * S);
+  ctx.quadraticCurveTo(photoX * S, photoY * S, (photoX + r) * S, photoY * S);
+  ctx.stroke();
+
+  // Names
+  const namesY = photoY + photoH + 22;
+  ctx.fillStyle = "#3d5a3e";
+  ctx.font = `${24 * S}px 'Pacifico'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Александр & Ангелина", (W / 2) * S, namesY * S);
+
+  // Divider
+  const divY = namesY + 18;
+  drawGoldLine(ctx, 20, divY, W - 40);
+  ctx.fillStyle = "#c9a84c";
+  ctx.font = `${13 * S}px serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("✦", (W / 2) * S, divY * S);
+  drawGoldLine(ctx, 20, divY, W - 40);
+
+  // Invite text
+  const t1Y = divY + 18;
+  ctx.fillStyle = "#5a3e2b";
+  ctx.font = `italic ${13 * S}px 'Cormorant Garamond'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Привет!", (W / 2) * S, t1Y * S);
+
+  const t2Y = t1Y + 20;
+  ctx.font = `italic ${12 * S}px 'Cormorant Garamond'`;
+  ctx.fillText("Мы приглашаем тебя на нашу свадьбу и будем", (W / 2) * S, t2Y * S);
+  ctx.fillText("очень рады видеть тебя в этот день.", (W / 2) * S, (t2Y + 16) * S);
+
+  // Bottom ornament
+  const botY = H - 14;
+  drawGoldLine(ctx, 20, botY, W - 40);
+  drawPearls(ctx, W / 2, botY + 8);
+
+  return canvas;
+}
+
+async function drawCard2(floralImg: HTMLImageElement): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement("canvas");
+  canvas.width = W * S;
+  canvas.height = H * S;
+  const ctx = canvas.getContext("2d")!;
+
+  // Background
+  ctx.fillStyle = "#faf7f3";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Floral bg
+  ctx.globalAlpha = 0.15;
+  ctx.drawImage(floralImg, 0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 1;
+
+  // Top ornament
+  drawTopOrnament(ctx, "24 · Июня · 2026");
+
+  // Subtitle
+  const sub1Y = 55;
+  ctx.fillStyle = "#8a7560";
+  ctx.font = `${9 * S}px 'Cormorant Garamond'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("ПРИГЛАШАЕМ ВАС НА ТОРЖЕСТВО,", (W / 2) * S, sub1Y * S);
+  ctx.fillText("ПОСВЯЩЁННОЕ ДНЮ НАШЕГО БРАКОСОЧЕТАНИЯ", (W / 2) * S, (sub1Y + 13) * S);
+
+  // Big date
+  const dateY = 90;
+  ctx.fillStyle = "#2d2416";
+  ctx.font = `bold ${32 * S}px 'Playfair Display'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("24 ИЮНЯ 2026", (W / 2) * S, dateY * S);
+
+  // Bottom block — line + boxes + dresscode + signature
+  // все элементы снизу через абсолютные координаты от низа
+  const botOrnY = H - 14;
+  drawGoldLine(ctx, 20, botOrnY, W - 40);
+  drawPearls(ctx, W / 2, botOrnY + 8);
+
+  // Signature
+  const sigY = botOrnY - 10;
+  ctx.fillStyle = "#7a6550";
+  ctx.font = `italic ${12 * S}px 'Cormorant Garamond'`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("Александр и Ангелина", (W / 2) * S, sigY * S);
+
+  // "До встречи"
+  const untilY = sigY - 6;
+  ctx.fillStyle = "#3d5a3e";
+  ctx.font = `${20 * S}px 'Pacifico'`;
+  ctx.textBaseline = "bottom";
+  ctx.fillText("До встречи на нашей свадьбе!", (W / 2) * S, untilY * S);
+
+  // divider star above "до встречи"
+  const starY = untilY - 26;
+  drawGoldLine(ctx, 20, starY, W - 40);
+  ctx.fillStyle = "#c9a84c";
+  ctx.font = `${11 * S}px serif`;
+  ctx.textBaseline = "middle";
+  ctx.fillText("✦", (W / 2) * S, starY * S);
+
+  // Dresscode block
+  const dcBotY = starY - 8;
+  const dcH = 90;
+  const dcTopY = dcBotY - dcH;
+  ctx.fillStyle = "rgba(250,245,235,0.85)";
+  roundRect(ctx, 20 * S, dcTopY * S, (W - 40) * S, dcH * S, 8 * S);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(201,168,76,0.22)";
+  ctx.lineWidth = 1 * S;
+  roundRect(ctx, 20 * S, dcTopY * S, (W - 40) * S, dcH * S, 8 * S);
+  ctx.stroke();
+
+  // dresscode title
+  ctx.fillStyle = "#3d2b1a";
+  ctx.font = `${22 * S}px 'Pacifico'`;
+  ctx.textBaseline = "top";
+  ctx.fillText("Дресс-код", (W / 2) * S, (dcTopY + 6) * S);
+
+  // dresscode text
+  ctx.fillStyle = "#5a3e2b";
+  ctx.font = `italic ${10 * S}px 'Cormorant Garamond'`;
+  ctx.textBaseline = "top";
+  ctx.fillText("Для нас самое главное — ваше присутствие!", (W / 2) * S, (dcTopY + 36) * S);
+  ctx.font = `italic ${9.5 * S}px 'Cormorant Garamond'`;
+  ctx.fillText("Но мы будем рады, если поддержите цветовую гамму 🥰", (W / 2) * S, (dcTopY + 52) * S);
+
+  // swatches
+  const swatchColors = ["#d4c5b0", "#e8a0a8", "#c4b0d4", "#a8bfd4", "#9db89e", "#d8e490"];
+  const swR = 12 * S;
+  const swY = (dcTopY + 72) * S;
+  const totalW = swatchColors.length * (swR * 2 + 4 * S) - 4 * S;
+  let swX = (W / 2) * S - totalW / 2 + swR;
+  swatchColors.forEach((color) => {
+    ctx.beginPath();
+    ctx.arc(swX, swY, swR, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.85)";
+    ctx.lineWidth = 2 * S;
+    ctx.stroke();
+    swX += swR * 2 + 4 * S;
+  });
+
+  // divider star above dresscode
+  const dc_divY = dcTopY - 8;
+  drawGoldLine(ctx, 20, dc_divY, W - 40);
+  ctx.fillStyle = "#c9a84c";
+  ctx.font = `${13 * S}px serif`;
+  ctx.textBaseline = "middle";
+  ctx.fillText("✦", (W / 2) * S, dc_divY * S);
+
+  // Time boxes
+  const boxBotY = dc_divY - 10;
+  const boxH = 105;
+  const boxTopY = boxBotY - boxH;
+  const boxW = (W - 40 - 10) / 2;
+
+  function drawBox(x: number, label: string, time: string, emoji: string, addr: string[]) {
+    ctx.fillStyle = "rgba(201,168,76,0.07)";
+    roundRect(ctx, x * S, boxTopY * S, boxW * S, boxH * S, 8 * S);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(201,168,76,0.28)";
+    ctx.lineWidth = 1 * S;
+    roundRect(ctx, x * S, boxTopY * S, boxW * S, boxH * S, 8 * S);
+    ctx.stroke();
+
+    const cx = (x + boxW / 2) * S;
+    ctx.textAlign = "center";
+
+    // label
+    ctx.fillStyle = "#8a7560";
+    ctx.font = `${7.5 * S}px 'Cormorant Garamond'`;
+    ctx.textBaseline = "top";
+    ctx.fillText(label, cx, (boxTopY + 7) * S);
+
+    // time
+    ctx.fillStyle = "#2d2416";
+    ctx.font = `bold ${20 * S}px 'Playfair Display'`;
+    ctx.textBaseline = "middle";
+    ctx.fillText(time, cx, (boxTopY + 34) * S);
+
+    // emoji
+    ctx.font = `${15 * S}px serif`;
+    ctx.fillText(emoji, cx, (boxTopY + 54) * S);
+
+    // address
+    ctx.fillStyle = "#5a3e2b";
+    ctx.font = `${10 * S}px 'Cormorant Garamond'`;
+    addr.forEach((line, i) => {
+      ctx.fillText(line, cx, (boxTopY + 68 + i * 13) * S);
+    });
+  }
+
+  drawBox(20, "ТОРЖЕСТВЕННАЯ РЕГИСТРАЦИЯ", "15:00", "💍", ["г. Тюмень", "ул. Малыгина, 85 · ЗАГС"]);
+  drawBox(20 + boxW + 10, "ПРАЗДНИЧНЫЙ УЖИН", "18:30–00:30", "🥂", ["г. Тюмень", "ул. Н. Фёдорова, 9", "Рест. «Грин Хаус»"]);
+
+  // Gold line above boxes
+  const lineAboveBoxY = boxTopY - 8;
+  drawGoldLine(ctx, 20, lineAboveBoxY, W - 40);
+
+  return canvas;
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
 const cardStyle: React.CSSProperties = {
@@ -23,73 +375,23 @@ const cardStyle: React.CSSProperties = {
   flexShrink: 0,
 };
 
-function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDivElement>; filename: string }) {
+function DownloadButton({ cardNum }: { cardNum: 1 | 2 }) {
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    if (!cardRef.current) return;
     setLoading(true);
     try {
-      const el = cardRef.current;
-
-      // Загружаем оба изображения как base64
-      const [coupleB64, floralB64] = await Promise.all([
-        urlToBase64(COUPLE_PHOTO_URL),
-        urlToBase64(FLORAL_BG_URL),
+      await loadFonts();
+      const [coupleImg, floralImg] = await Promise.all([
+        loadImageFromProxy(COUPLE_PHOTO_URL),
+        loadImageFromProxy(FLORAL_BG_URL),
       ]);
-
-      // Временно подменяем src у <img> и убираем filter
-      const imgs = el.querySelectorAll<HTMLImageElement>("img");
-      const origSrcs: string[] = [];
-      const origFilters: string[] = [];
-      imgs.forEach((img) => {
-        origSrcs.push(img.src);
-        origFilters.push(img.style.filter);
-        if (img.src.includes("7598d144")) {
-          img.src = coupleB64;
-          img.style.filter = "none";
-        }
-      });
-
-      // Временно подменяем background-image у div с флоральным фоном
-      const bgDivs = el.querySelectorAll<HTMLElement>("[style]");
-      const origBgs: string[] = [];
-      bgDivs.forEach((div) => {
-        const bg = div.style.backgroundImage;
-        origBgs.push(bg);
-        if (bg && bg.includes("428c9347")) {
-          div.style.backgroundImage = `url(${floralB64})`;
-        }
-      });
-
-      // Принудительно загружаем все шрифты
-      await document.fonts.ready;
-      await Promise.all([
-        document.fonts.load("700 32px 'Playfair Display'", "24 ИЮНЯ 2026"),
-        document.fonts.load("400 34px 'Great Vibes'", "Александр & Ангелина"),
-        document.fonts.load("400 26px 'Pacifico'", "Александр & Ангелина"),
-        document.fonts.load("italic 400 13px 'Cormorant Garamond'", "Привет"),
-      ]);
-      await new Promise((r) => setTimeout(r, 400));
-
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: false,
-        allowTaint: false,
-        backgroundColor: "#faf7f3",
-        imageTimeout: 0,
-      });
-
-      // Восстанавливаем оригинальные значения
-      imgs.forEach((img, i) => {
-        img.src = origSrcs[i];
-        img.style.filter = origFilters[i];
-      });
-      bgDivs.forEach((div, i) => { if (origBgs[i]) div.style.backgroundImage = origBgs[i]; });
-
+      const canvas = cardNum === 1
+        ? await drawCard1(coupleImg, floralImg)
+        : await drawCard2(floralImg);
       const link = document.createElement("a");
-      link.download = filename;
-      link.href = canvas.toDataURL("image/jpeg", 0.95);
+      link.download = `приглашение-карточка-${cardNum}.jpg`;
+      link.href = canvas.toDataURL("image/jpeg", 0.97);
       link.click();
     } finally {
       setLoading(false);
@@ -110,11 +412,10 @@ function DownloadButton({ cardRef, filename }: { cardRef: React.RefObject<HTMLDi
         fontFamily: "'Cormorant Garamond', serif",
         fontSize: "13px",
         letterSpacing: "2px",
-        textTransform: "uppercase" as const,
+        textTransform: "uppercase",
         cursor: loading ? "not-allowed" : "pointer",
         boxShadow: "0 2px 8px rgba(201,168,76,0.35)",
         fontWeight: 600,
-        transition: "opacity 0.2s",
       }}
     >
       {loading ? "Сохранение..." : "⬇ Скачать карточку"}
@@ -167,18 +468,17 @@ export default function Index() {
         }
       `}</style>
 
-      {/* КАРТОЧКА 1 — Фото + имена + текст */}
+      {/* КАРТОЧКА 1 */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <p className="card-label text-center mb-3" style={{ letterSpacing: "4px" }}>Карточка 1 из 2</p>
         <div ref={card1Ref} style={cardStyle}>
-          {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
             backgroundImage: `url(${FLORAL_BG_URL})`,
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
-          {/* Top ornament — зафиксирован сверху */}
+          {/* Top ornament */}
           <div style={{ position: "absolute", top: "14px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
@@ -192,39 +492,30 @@ export default function Index() {
             <div className="gold-line" style={{ width: "100%", marginTop: "3px" }} />
           </div>
 
-          {/* Общее фото */}
-          <div style={{ position: "relative", zIndex: 10, padding: "62px 50px 0" }}>
+          {/* Фото */}
+          <div style={{ position: "relative", zIndex: 10, padding: "48px 50px 0" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "2px solid #e8d48b", boxShadow: "0 4px 16px rgba(0,0,0,0.14)" }}>
-              <img
-                src={COUPLE_PHOTO_URL}
-                alt="Александр и Ангелина"
-                style={{ width: "100%", height: "340px", objectFit: "cover", objectPosition: "center top", display: "block", filter: "brightness(1.03) contrast(0.97)" }}
-              />
+              <img src={COUPLE_PHOTO_URL} alt="Александр и Ангелина"
+                style={{ width: "100%", height: "320px", objectFit: "cover", objectPosition: "center top", display: "block" }} />
             </div>
           </div>
 
-          {/* Имена в одну линию — шрифт Pacifico */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "8px" }}>
-            <h2 style={{ fontFamily: "'Pacifico', cursive", fontSize: "26px", color: "#3d5a3e", lineHeight: 1.1, margin: 0 }}>
+          {/* Имена */}
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", marginTop: "10px" }}>
+            <h2 style={{ fontFamily: "'Pacifico', cursive", fontSize: "24px", color: "#3d5a3e", lineHeight: 1.1, margin: 0 }}>
               Александр &amp; Ангелина
             </h2>
           </div>
 
           {/* Разделитель */}
-          <div style={{ position: "relative", zIndex: 10, padding: "2px 22px" }}>
-            <div className="sec-div">
-              <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
-            </div>
+          <div style={{ position: "relative", zIndex: 10, padding: "4px 22px" }}>
+            <div className="sec-div"><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
           </div>
 
-          {/* Текст приглашения */}
+          {/* Текст */}
           <div style={{ position: "relative", zIndex: 10, padding: "0 26px", textAlign: "center" }}>
-            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.7, marginBottom: "4px" }}>
-              Привет!
-            </p>
-            <p className="font-serif-el" style={{ fontSize: "12.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.7 }}>
-              Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.
-            </p>
+            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "4px" }}>Привет!</p>
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6 }}>Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.</p>
           </div>
 
           {/* Bottom ornament */}
@@ -235,21 +526,20 @@ export default function Index() {
             </div>
           </div>
         </div>
-        <DownloadButton cardRef={card1Ref} filename="приглашение-карточка-1.jpg" />
+        <DownloadButton cardNum={1} />
       </div>
 
-      {/* КАРТОЧКА 2 — Дата + место + дресс-код */}
+      {/* КАРТОЧКА 2 */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <p className="card-label text-center mb-3" style={{ letterSpacing: "4px" }}>Карточка 2 из 2</p>
         <div ref={card2Ref} style={cardStyle}>
-          {/* Floral bg */}
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
             backgroundImage: `url(${FLORAL_BG_URL})`,
             backgroundSize: "cover", backgroundPosition: "center", opacity: 0.15,
           }} />
 
-          {/* Top ornament — зафиксирован сверху */}
+          {/* Top ornament */}
           <div style={{ position: "absolute", top: "14px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
@@ -264,94 +554,79 @@ export default function Index() {
           </div>
 
           {/* Дата */}
-          <div style={{ position: "relative", zIndex: 10, textAlign: "center", padding: "68px 22px 0" }}>
-            <div style={{ height: "30px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1 }}>
-                Приглашаем вас на торжество, посвящённое дню нашего бракосочетания
-              </span>
-            </div>
-            <div style={{ height: "42px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", display: "block" }}>
-                24 ИЮНЯ 2026
-              </span>
-            </div>
+          <div style={{ position: "relative", zIndex: 10, textAlign: "center", paddingTop: "68px" }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.5, margin: "0 0 6px" }}>
+              Приглашаем вас на торжество,<br />посвящённое дню нашего бракосочетания
+            </p>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: 700, color: "#2d2416", letterSpacing: "1px", lineHeight: 1, margin: 0 }}>
+              24 ИЮНЯ 2026
+            </p>
           </div>
 
           {/* Линия + окошки + дресс-код + финал — всё прижато к низу */}
-          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "stretch", gap: "0" }}>
+          <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "stretch" }}>
             <div className="gold-line" style={{ marginBottom: "8px" }} />
 
-            {/* Время и место */}
+            {/* Окошки */}
             <div style={{ display: "flex", gap: "10px", marginBottom: "6px" }}>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
                 <div style={{ height: "26px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2, textAlign: "center" }}>Торжественная регистрация</span>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2 }}>Торжественная регистрация</span>
                 </div>
                 <div style={{ height: "30px", display: "flex", alignItems: "center" }}>
                   <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 700, color: "#2d2416" }}>15:00</span>
                 </div>
                 <span style={{ fontSize: "16px", margin: "2px 0" }}>💍</span>
-                <div style={{ height: "54px", display: "flex", alignItems: "center" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5, textAlign: "center" }}>г. Тюмень<br/>ул. Малыгина, 85<br/>ЗАГС</span>
+                <div style={{ height: "52px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5 }}>г. Тюмень<br />ул. Малыгина, 85<br />ЗАГС</span>
                 </div>
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
                 <div style={{ height: "26px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "3px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2, textAlign: "center" }}>Праздничный ужин</span>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "8px", letterSpacing: "2px", textTransform: "uppercase", color: "#8a7560", lineHeight: 1.2 }}>Праздничный ужин</span>
                 </div>
                 <div style={{ height: "30px", display: "flex", alignItems: "center" }}>
                   <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", fontWeight: 700, color: "#2d2416" }}>18:30–00:30</span>
                 </div>
                 <span style={{ fontSize: "16px", margin: "2px 0" }}>🥂</span>
-                <div style={{ height: "54px", display: "flex", alignItems: "center" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5, textAlign: "center" }}>г. Тюмень<br/>ул. Н. Фёдорова, 9<br/>Рест. «Грин Хаус»</span>
+                <div style={{ height: "52px", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "11px", color: "#5a3e2b", lineHeight: 1.5 }}>г. Тюмень<br />ул. Н. Фёдорова, 9<br />Рест. «Грин Хаус»</span>
                 </div>
               </div>
             </div>
 
             {/* Дресс-код */}
-            <div style={{ marginBottom: "4px" }}>
+            <div>
               <div className="sec-div" style={{ marginBottom: "3px" }}>
                 <span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span>
               </div>
               <div style={{ padding: "5px 12px", borderRadius: "8px", background: "rgba(250,245,235,0.85)", border: "1px solid rgba(201,168,76,0.22)", textAlign: "center" }}>
-                <h3 className="font-script" style={{ fontSize: "24px", color: "#3d2b1a", lineHeight: 1.1, marginBottom: "2px" }}>Дресс-код</h3>
-                <p className="font-serif-el" style={{ fontSize: "11px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "2px" }}>
-                  Для нас самое главное — ваше присутствие!
-                </p>
-                <p className="font-serif-el" style={{ fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "4px" }}>
-                  Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰
-                </p>
+                <h3 style={{ fontFamily: "'Pacifico', cursive", fontSize: "22px", color: "#3d2b1a", lineHeight: 1.1, margin: "0 0 2px" }}>Дресс-код</h3>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "10.5px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.4, margin: "0 0 2px" }}>Для нас самое главное — ваше присутствие!</p>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "10px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.4, margin: "0 0 4px" }}>Но мы будем очень благодарны, если поддержите цветовую гамму нашей свадьбы 🥰</p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "7px" }}>
-                  <div className="dress-swatch" style={{ background: "#d4c5b0" }} />
-                  <div className="dress-swatch" style={{ background: "#e8a0a8" }} />
-                  <div className="dress-swatch" style={{ background: "#c4b0d4" }} />
-                  <div className="dress-swatch" style={{ background: "#a8bfd4" }} />
-                  <div className="dress-swatch" style={{ background: "#9db89e" }} />
-                  <div className="dress-swatch" style={{ background: "#d8e490" }} />
+                  {["#d4c5b0","#e8a0a8","#c4b0d4","#a8bfd4","#9db89e","#d8e490"].map(c => (
+                    <div key={c} className="dress-swatch" style={{ background: c }} />
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Финальная фраза + Bottom ornament */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
-              <div className="sec-div" style={{ marginBottom: "2px" }}>
+            {/* Финал */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px", marginTop: "3px" }}>
+              <div className="sec-div" style={{ marginBottom: "1px" }}>
                 <span style={{ color: "#c9a84c", fontSize: "11px" }}>✦</span>
               </div>
-              <p className="font-script" style={{ fontSize: "20px", color: "#3d5a3e", lineHeight: 1.2 }}>
-                До встречи на нашей свадьбе!
-              </p>
-              <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", marginBottom: "4px" }}>
-                Александр и Ангелина
-              </p>
+              <p style={{ fontFamily: "'Pacifico', cursive", fontSize: "18px", color: "#3d5a3e", lineHeight: 1.2, margin: 0 }}>До встречи на нашей свадьбе!</p>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "12px", fontStyle: "italic", color: "#7a6550", letterSpacing: "1px", margin: "0 0 3px" }}>Александр и Ангелина</p>
               <div className="gold-line" style={{ width: "100%" }} />
-              <div style={{ display: "flex", gap: "6px" }}>
+              <div style={{ display: "flex", gap: "6px", marginTop: "2px" }}>
                 <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
               </div>
             </div>
           </div>
         </div>
-        <DownloadButton cardRef={card2Ref} filename="приглашение-карточка-2.jpg" />
+        <DownloadButton cardNum={2} />
       </div>
 
       <p className="card-label text-center" style={{ fontFamily: "'Cormorant Garamond', serif", marginTop: "4px" }}>
