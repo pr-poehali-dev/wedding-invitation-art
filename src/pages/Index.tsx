@@ -271,11 +271,14 @@ export default function Index() {
                 24 ИЮНЯ 2026
               </span>
             </div>
-            <div className="gold-line" style={{ width: "100%", marginTop: "4px" }} />
+          </div>
+
+          <div style={{ position: "relative", zIndex: 10, padding: "0 22px" }}>
+            <div className="gold-line" />
           </div>
 
           {/* Время и место */}
-          <div style={{ position: "relative", zIndex: 10, padding: "22px 16px 0", display: "flex", gap: "10px" }}>
+          <div style={{ position: "relative", zIndex: 10, padding: "10px 16px 0", display: "flex", gap: "10px" }}>
             {/* ЗАГС */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "8px 6px", borderRadius: "8px", background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.28)" }}>
               <p className="card-label" style={{ fontSize: "8px", marginBottom: "4px", lineHeight: 1.5 }}>Торжественная<br/>регистрация</p>
