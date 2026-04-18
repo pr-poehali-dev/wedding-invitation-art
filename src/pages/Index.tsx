@@ -1,5 +1,16 @@
 import React, { useRef, useState } from "react";
 
+const INVITE_VARIANTS = [
+  { label: "Мама", text: "Дорогая Мама, приглашаем тебя на нашу свадьбу! Будем очень рады, если ты будешь рядом с нами в этот день." },
+  { label: "Бабушка и дедушка", text: "Дорогие бабушка и дедушка, приглашаем вас на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Папа Константин и Елена", text: "Дорогой папа Константин и дорогая Елена, приглашаем вас (и детей🥰) на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Дядя Коля и тётя Лена", text: "Дорогие дядя Коля и тётя Лена, приглашаем вас и Серафима на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Дарья и Тимофей", text: "Дорогие Дарья и Тимофей, приглашаем вас на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Бабушка Дина и Бабушка Света", text: "Дорогая бабушка Дина и Бабушка Света, приглашаем вас на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Мама и папа", text: "Дорогие мама и папа, приглашаем вас на нашу свадьбу! Будем очень рады, если вы будете рядом с нами в этот день." },
+  { label: "Андрей", text: "Дорогой Андрей, приглашаем тебя на нашу свадьбу! Будем очень рады, если ты будешь рядом с нами в этот день." },
+];
+
 const COUPLE_PHOTO_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/bucket/7598d144-ddf0-4058-9c0e-73fca6d7d62a.jpeg";
 const FLORAL_BG_URL = "https://cdn.poehali.dev/projects/ba4017f8-131f-49fb-92ba-f57e82f93ca9/files/428c9347-28da-4292-8be1-a760f2584fc2.jpg";
 const PROXY_URL = "https://functions.poehali.dev/2229a973-ea11-4863-b54f-c13531af3e6d";
@@ -87,7 +98,24 @@ function drawTopOrnament(ctx: CanvasRenderingContext2D, label: string) {
   drawGoldLine(ctx, 20, 37, W - 40);
 }
 
-async function drawCard1(coupleImg: HTMLImageElement, floralImg: HTMLImageElement): Promise<HTMLCanvasElement> {
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+async function drawCard1(coupleImg: HTMLImageElement, floralImg: HTMLImageElement, inviteText: string): Promise<HTMLCanvasElement> {
   const canvas = document.createElement("canvas");
   canvas.width = W * S;
   canvas.height = H * S;
@@ -164,17 +192,15 @@ async function drawCard1(coupleImg: HTMLImageElement, floralImg: HTMLImageElemen
   drawGoldLine(ctx, 20, divY, W - 40);
 
   // Invite text
-  const t1Y = divY + 18;
+  const t1Y = divY + 16;
   ctx.fillStyle = "#5a3e2b";
-  ctx.font = `italic ${13 * S}px 'Cormorant Garamond'`;
+  ctx.font = `italic ${15 * S}px 'Cormorant Garamond'`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("Привет!", (W / 2) * S, t1Y * S);
-
-  const t2Y = t1Y + 20;
-  ctx.font = `italic ${12 * S}px 'Cormorant Garamond'`;
-  ctx.fillText("Мы приглашаем тебя на нашу свадьбу и будем", (W / 2) * S, t2Y * S);
-  ctx.fillText("очень рады видеть тебя в этот день.", (W / 2) * S, (t2Y + 16) * S);
+  const lines = wrapText(ctx, inviteText, (W - 50) * S);
+  lines.forEach((line, i) => {
+    ctx.fillText(line, (W / 2) * S, (t1Y + i * 20) * S);
+  });
 
   // Bottom ornament
   const botY = H - 14;
@@ -376,7 +402,7 @@ const cardStyle: React.CSSProperties = {
   flexShrink: 0,
 };
 
-function DownloadButton({ cardNum }: { cardNum: 1 | 2 }) {
+function DownloadButton({ cardNum, inviteText, variantLabel }: { cardNum: 1 | 2; inviteText?: string; variantLabel?: string }) {
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
@@ -388,10 +414,10 @@ function DownloadButton({ cardNum }: { cardNum: 1 | 2 }) {
         loadImageFromProxy(FLORAL_BG_URL),
       ]);
       const canvas = cardNum === 1
-        ? await drawCard1(coupleImg, floralImg)
+        ? await drawCard1(coupleImg, floralImg, inviteText ?? INVITE_VARIANTS[0].text)
         : await drawCard2(floralImg);
       const link = document.createElement("a");
-      link.download = `приглашение-карточка-${cardNum}.jpg`;
+      link.download = `приглашение-${variantLabel ?? "карточка-1"}.jpg`;
       link.href = canvas.toDataURL("image/jpeg", 0.97);
       link.click();
     } finally {
@@ -427,13 +453,14 @@ function DownloadButton({ cardNum }: { cardNum: 1 | 2 }) {
 export default function Index() {
   const card1Ref = useRef<HTMLDivElement>(null);
   const card2Ref = useRef<HTMLDivElement>(null);
+  const [variantIdx, setVariantIdx] = useState(0);
+  const currentVariant = INVITE_VARIANTS[variantIdx];
 
   return (
     <div className="min-h-screen bg-[#e8e3dc] flex flex-col items-center py-10 px-4 gap-8">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&family=Marck+Script&display=swap');
         .font-script { font-family: 'Great Vibes', cursive; }
-        .font-pacifico { font-family: 'Pacifico', cursive; }
         .font-serif-el { font-family: 'Cormorant Garamond', serif; }
         .font-playfair { font-family: 'Playfair Display', serif; }
         .gold-line {
@@ -467,11 +494,42 @@ export default function Index() {
           text-transform: uppercase;
           color: #8a7560;
         }
+        .variant-btn {
+          padding: 6px 14px;
+          border-radius: 20px;
+          border: 1px solid #c9a84c;
+          background: transparent;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 13px;
+          color: #5a3e2b;
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+        }
+        .variant-btn.active {
+          background: linear-gradient(135deg, #c9a84c, #e8d48b);
+          color: #3d2b1a;
+          font-weight: 600;
+        }
       `}</style>
 
       {/* КАРТОЧКА 1 */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0" }}>
         <p className="card-label text-center mb-3" style={{ letterSpacing: "4px" }}>Карточка 1 из 2</p>
+
+        {/* Переключатель вариантов */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "center", maxWidth: "420px", marginBottom: "14px" }}>
+          {INVITE_VARIANTS.map((v, i) => (
+            <button
+              key={i}
+              className={`variant-btn${variantIdx === i ? " active" : ""}`}
+              onClick={() => setVariantIdx(i)}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+
         <div ref={card1Ref} style={cardStyle}>
           <div style={{
             position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
@@ -508,10 +566,12 @@ export default function Index() {
             </h2>
           </div>
 
-          {/* Текст + bottom ornament — прижаты к низу */}
+          {/* Текст */}
           <div style={{ position: "relative", zIndex: 10, padding: "6px 20px 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div className="sec-div" style={{ marginBottom: "4px" }}><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
-            <p className="font-serif-el" style={{ fontSize: "15px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "0", textAlign: "center" }}>Дорогая Мама, приглашаем тебя на нашу свадьбу! Будем очень рады, если ты будешь рядом с нами в этот день.</p>
+            <p className="font-serif-el" style={{ fontSize: "15px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "0", textAlign: "center" }}>
+              {currentVariant.text}
+            </p>
           </div>
 
           {/* Bottom ornament */}
@@ -522,7 +582,7 @@ export default function Index() {
             </div>
           </div>
         </div>
-        <DownloadButton cardNum={1} />
+        <DownloadButton cardNum={1} inviteText={currentVariant.text} variantLabel={currentVariant.label} />
       </div>
 
       {/* КАРТОЧКА 2 */}
