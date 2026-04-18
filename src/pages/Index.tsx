@@ -511,8 +511,7 @@ export default function Index() {
           {/* Текст + bottom ornament — прижаты к низу */}
           <div style={{ position: "absolute", bottom: "10px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div className="sec-div" style={{ marginBottom: "4px" }}><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
-            <p className="font-serif-el" style={{ fontSize: "13px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "2px" }}>Привет!</p>
-            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "6px", textAlign: "center" }}>Мы приглашаем тебя на нашу свадьбу и будем очень рады видеть тебя в этот день.</p>
+            <p className="font-serif-el" style={{ fontSize: "12px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.6, marginBottom: "6px", textAlign: "center" }}>Дорогая Мама, приглашаем тебя на нашу свадьбу! Будем очень рады, если ты будешь рядом с нами в этот день.</p>
             <div className="gold-line" style={{ width: "100%" }} />
             <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
               <div className="pearl-dot" /><div className="pearl-dot" /><div className="pearl-dot" />
