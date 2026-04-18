@@ -566,9 +566,9 @@ export default function Index() {
             </h2>
           </div>
 
-          {/* Текст */}
-          <div style={{ position: "relative", zIndex: 10, padding: "6px 20px 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="sec-div" style={{ marginBottom: "4px" }}><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
+          {/* Текст + нижняя полоска — единый абсолютный блок от имён до низа */}
+          <div style={{ position: "absolute", top: "430px", bottom: "30px", left: "20px", right: "20px", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+            <div className="sec-div" style={{ marginBottom: "8px" }}><span style={{ color: "#c9a84c", fontSize: "13px" }}>✦</span></div>
             <p className="font-serif-el" style={{ fontSize: "15px", fontStyle: "italic", color: "#5a3e2b", lineHeight: 1.5, marginBottom: "0", textAlign: "center" }}>
               {currentVariant.text}
             </p>
